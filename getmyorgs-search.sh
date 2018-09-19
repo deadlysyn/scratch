@@ -31,12 +31,10 @@ while (( $user_page <= $user_pages )); do
     # e.g. /v2/users/333bb853-753f-4821-9ccb-9c473f34b934/organizations.
     # remove forward slash with {var:1}
     user_url="${user_url:1}"
-
-    if cf curl "$user_url" | jq -e --arg user "$user" 'select (.entity.username | contains($user))' 2>&1 >/dev/null; then
+    if cf curl "$user_url" | jq -e --arg user "$user" 'select (.entity.username | contains($user))' >/dev/null 2>&1; then
       user_urls[$i]="$user_url"
       (( i++ ))
     fi
-
     printf "."
   done
   (( user_page++ ))
