@@ -1,8 +1,6 @@
 #!/bin/bash
 # Given a search string, find all the orgs for all users that match that string
 
-set -x
-
 # Get the username string we're interested in
 if [[ -z "$1" ]]; then
   echo "Please specify a serach string to search for users and get their orgs"
