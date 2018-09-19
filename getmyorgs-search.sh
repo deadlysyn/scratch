@@ -1,12 +1,14 @@
 #!/bin/bash
 # Given a search string, find all the orgs for all users that match that string
 
+set -x
+
 # Get the username string we're interested in
-if [[ -z $1 ]]; then
+if [[ -z "$1" ]]; then
   echo "Please specify a serach string to search for users and get their orgs"
   exit 1
 fi
-user=$1
+user="$1"
 
 # Check to see if we're logged in and targeted
 if ! cf target 2>&1 > /dev/null; then
@@ -32,8 +34,8 @@ while (( $user_page <= $user_pages )); do
     # remove forward slash with {var:1}
     user_url="${user_url:1}"
 
-    if cf curl "$user_url" | jq -e --arg user "$user" 'select (.entity.username | contains($user))'; then
-      user_urls[$i]=$user_url
+    if cf curl "$user_url" | jq -e --arg user "$user" 'select (.entity.username | contains($user))' 2>&1 >/dev/null; then
+      user_urls[$i]="$user_url"
       (( i++ ))
     fi
 
@@ -41,12 +43,6 @@ while (( $user_page <= $user_pages )); do
   done
   (( user_page++ ))
 done
-
-## Print the index and value of each element in the user_urls array
-## Useful for debugging
-## for j in "${!user_urls[@]}"; do
-##  printf "%s\t%s\n" "$j" "${user_urls[$j]}"
-## done
 
 # Test if user_url is still not set after searching all the pages
 # If user_urls is empty, that means that the given username string was not found
